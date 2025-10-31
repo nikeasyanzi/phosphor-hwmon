@@ -68,7 +68,7 @@ hwmon_dep = declare_dependency(
 
 # CLI11 might not have a pkg-config. It is header only so just make
 # sure we can access the needed symbols from the header.
-cli11_dep = dependency('cli11', required: false)
+cli11_dep = dependency('CLI11', required: false)
 has_cli11 = meson.get_compiler('cpp').has_header_symbol(
     'CLI/CLI.hpp',
     'CLI::App',
@@ -76,7 +76,7 @@ has_cli11 = meson.get_compiler('cpp').has_header_symbol(
     required: false,
 )
 if not has_cli11
-    cli11_proj = subproject('cli11', required: false)
+    cli11_proj = subproject('CLI11', required: false)
     assert(cli11_proj.found(), 'CLI11 is required')
     cli11_dep = cli11_proj.get_variable('CLI11_dep')
 endif
