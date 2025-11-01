@@ -6,7 +6,8 @@
 #include "hwmonio.hpp"
 
 #include <phosphor-logging/elog-errors.hpp>
-#include <phosphor-logging/log.hpp>
+//#include <phosphor-logging/log.hpp>
+#include <phosphor-logging/lg2.hpp>
 #include <xyz/openbmc_project/Sensor/Device/error.hpp>
 
 #include <filesystem>
@@ -126,7 +127,11 @@ std::shared_ptr<T> addTarget(const SensorSet::key_type& sensor,
             else
             {
                 using namespace phosphor::logging;
-                log<level::ERR>(
+                //log<level::ERR>(
+                //    "Invalid TARGET_MODE env var found",
+                //    phosphor::logging::entry("TARGET_MODE=%s", tmEnv.c_str()),
+                //    phosphor::logging::entry("DEVPATH=%s", devPath.c_str()));
+        lg2::error(
                     "Invalid TARGET_MODE env var found",
                     phosphor::logging::entry("TARGET_MODE=%s", tmEnv.c_str()),
                     phosphor::logging::entry("DEVPATH=%s", devPath.c_str()));
@@ -154,7 +159,10 @@ std::shared_ptr<T> addTarget(const SensorSet::key_type& sensor,
                     metadata::CALLOUT_ERRNO(e.code().value()),
                     metadata::CALLOUT_DEVICE_PATH(devPath.c_str()));
 
-                log<level::INFO>(std::format("Failing sysfs file: {} errno: {}",
+                //log<level::INFO>(std::format("Failing sysfs file: {} errno: {}",
+                //                             sysfsFullPath, e.code().value())
+                //                     .c_str());
+        lg2::info(std::format("Failing sysfs file: {} errno: {}",
                                              sysfsFullPath, e.code().value())
                                      .c_str());
             }
