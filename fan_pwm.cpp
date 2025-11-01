@@ -41,10 +41,13 @@ uint64_t FanPwm::target(uint64_t value)
         auto file =
             sysfs::make_sysfs_path(_ioAccess->path(), _type, _id, empty);
 
-        log<level::INFO>(std::format("Failing sysfs file: {} errno: {}", file,
+    #log<level::INFO>(std::format("Failing sysfs file: {} errno: {}", file,
+    #                                 e.code().value())
+    #                         .c_str());
+        lg2::info(std::format("Failing sysfs file: {} errno: {}", file,
                                      e.code().value())
                              .c_str());
-
+        
         exit(EXIT_FAILURE);
     }
 
