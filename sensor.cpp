@@ -9,6 +9,7 @@
 #include "sysfs.hpp"
 
 #include <phosphor-logging/elog-errors.hpp>
+#include <phosphor-logging/lg2.hpp>
 #include <xyz/openbmc_project/Common/error.hpp>
 #include <xyz/openbmc_project/Sensor/Device/error.hpp>
 
@@ -42,7 +43,7 @@ Sensor::Sensor(const SensorSet::key_type& sensor,
 
         if (!_handle)
         {
-            log<level::ERR>("Unable to set up gpio locking");
+            lg2::error("Unable to set up gpio locking");
             elog<InternalFailure>();
         }
     }
@@ -83,10 +84,9 @@ void Sensor::addRemoveRCs(const std::string& rcList)
         {
             // Unable to convert to int, continue to next token
             std::string name = _sensor.first + "_" + _sensor.second;
-            log<level::INFO>("Unable to convert sensor removal return code",
-                             entry("SENSOR=%s", name.c_str()),
-                             entry("RC=%s", rmRC),
-                             entry("EXCEPTION=%s", le.what()));
+            lg2::info(
+                "Unable to convert sensor {SENSOR} removal return code {RC}, {EXCEPTION}",
+                "SENSOR", name.c_str(), "RC", rmRC, "EXCEPTION", le.what());
         }
         rmRC = std::strtok(nullptr, ", ");
     }
@@ -244,9 +244,9 @@ std::shared_ptr<StatusObject> Sensor::addStatus(ObjectInfo& info)
                 metadata::CALLOUT_ERRNO(e.code().value()),
                 metadata::CALLOUT_DEVICE_PATH(_devPath.c_str()));
 
-            log<level::INFO>(std::format("Failing sysfs file: {} errno {}",
-                                         sysfsFullPath, e.code().value())
-                                 .c_str());
+            lg2::info("Failing sysfs file: {SYSFSFULLPATH} errno {ERRNO}",
+                      "SYSFSFULLPATH", sysfsFullPath, "ERRNO",
+                      e.code().value());
         }
     }
 

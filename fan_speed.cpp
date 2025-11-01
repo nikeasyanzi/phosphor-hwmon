@@ -7,6 +7,7 @@
 #include "sysfs.hpp"
 
 #include <phosphor-logging/elog-errors.hpp>
+#include <phosphor-logging/lg2.hpp>
 #include <xyz/openbmc_project/Control/Device/error.hpp>
 
 #include <format>
@@ -35,9 +36,9 @@ uint64_t FanSpeed::target(uint64_t value)
         auto file = sysfs::make_sysfs_path(_ioAccess->path(), _type, _id,
                                            entry::target);
 
-        log<level::INFO>(std::format("Failing sysfs file: {} errno: {}", file,
-                                     e.code().value())
-                             .c_str());
+        lg2::info(std::format("Failing sysfs file: {} errno: {}", file,
+                              e.code().value())
+                      .c_str());
 
         exit(EXIT_FAILURE);
     }
@@ -70,9 +71,9 @@ void FanSpeed::enable()
             auto fullPath = sysfs::make_sysfs_path(_ioAccess->path(), type::pwm,
                                                    _id, entry::enable);
 
-            log<level::INFO>(std::format("Failing sysfs file: {} errno: {}",
-                                         fullPath, e.code().value())
-                                 .c_str());
+            lg2::info(std::format("Failing sysfs file: {} errno: {}", fullPath,
+                                  e.code().value())
+                          .c_str());
 
             exit(EXIT_FAILURE);
         }

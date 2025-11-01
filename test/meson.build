@@ -43,3 +43,16 @@ foreach t : tests
         ),
     )
 endforeach
+
+# Create a separate test executable for gpio_handle that calls the real implementation
+# (without the mock in test/gpio.cpp)
+test(
+    'lg2_unittest',
+    executable(
+        'lg2_unittest_real',
+        'lg2_unittest.cpp',
+        # Note: NOT including 'gpio.cpp' mock, so real implementation will be used
+        implicit_include_directories: false,
+        dependencies: [hwmon_dep, gtest, gmock],
+    ),
+)

@@ -2,6 +2,7 @@
 
 #include <gpioplus/chip.hpp>
 #include <gpioplus/handle.hpp>
+#include <phosphor-logging/lg2.hpp>
 #include <phosphor-logging/log.hpp>
 
 #include <cstdlib>
@@ -22,15 +23,14 @@ std::unique_ptr<gpioplus::HandleInterface> BuildGpioHandle(
 
     if (!gpioEnd || gpioEnd != &gpiochip.c_str()[gpiochip.length()])
     {
-        log<level::ERR>("Unable to handle giochip entry",
-                        entry("GPIOCHIP=%s", gpiochip.c_str()));
+        lg2::error("Unable to handle giochip entry {GPIOCHIP}", "GPIOCHIP",
+                   gpiochip.c_str());
         return nullptr;
     }
 
     if (!lineEnd || lineEnd != &line.c_str()[line.length()])
     {
-        log<level::ERR>("Unable to handle line entry",
-                        entry("LINE=%s", line.c_str()));
+        lg2::error("Unable to handle line entry {}", "LINE", line.c_str());
         return nullptr;
     }
 
@@ -47,8 +47,7 @@ std::unique_ptr<gpioplus::HandleInterface> BuildGpioHandle(
     }
     catch (const std::exception& e)
     {
-        log<level::ERR>("Unable to set up GPIO handle",
-                        entry("ERROR=%s", e.what()));
+        lg2::error("Unable to set up GPIO handle {ERROR}", "ERROR", e.what());
         return nullptr;
     }
 }

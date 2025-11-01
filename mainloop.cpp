@@ -30,6 +30,7 @@
 #include "util.hpp"
 
 #include <phosphor-logging/elog-errors.hpp>
+#include <phosphor-logging/lg2.hpp>
 #include <xyz/openbmc_project/Sensor/Device/error.hpp>
 
 #include <cassert>
@@ -285,9 +286,9 @@ std::optional<ObjectStateData> MainLoop::getObject(
             if (_rmSensors.find(sensorSetKey) == _rmSensors.end())
             {
                 // Trace for sensor not already removed from dbus
-                log<level::INFO>("Sensor not added to dbus for read fail",
-                                 entry("FILE=%s", file.c_str()),
-                                 entry("RC=%d", e.code().value()));
+                lg2::info(
+                    "Sensor not added to dbus for read fail, file:{FILE}, return code={RC}",
+                    "FILE", file.c_str(), "RC", e.code().value());
                 _rmSensors[std::move(sensorSetKey)] = std::move(sensorAttrs);
             }
             return {};
@@ -300,9 +301,8 @@ std::optional<ObjectStateData> MainLoop::getObject(
             xyz::openbmc_project::Sensor::Device::ReadFailure::
                 CALLOUT_DEVICE_PATH(_devPath.c_str()));
 
-        log<level::INFO>(std::format("Failing sysfs file: {} errno: {}", file,
-                                     e.code().value())
-                             .c_str());
+        lg2::info("Failing sysfs file:{FILE}, errno:{ERRNO}", "FILE", file,
+                  "ERRNO", e.code().value());
         exit(EXIT_FAILURE);
     }
     auto sensorValue = valueInterface->value();
@@ -388,8 +388,8 @@ void MainLoop::run()
     }
     catch (const std::exception& e)
     {
-        log<level::ERR>("Error in sysfs polling loop",
-                        entry("ERROR=%s", e.what()));
+        lg2::error("Error in sysfs polling loop {ERROR_MSG}", "ERROR_MSG",
+                   e.what());
         throw;
     }
 }
@@ -595,9 +595,9 @@ void MainLoop::read()
                 if (_rmSensors.find(sensorSetKey) == _rmSensors.end())
                 {
                     // Trace for sensor not already removed from dbus
-                    log<level::INFO>("Remove sensor from dbus for read fail",
-                                     entry("FILE=%s", file.c_str()),
-                                     entry("RC=%d", e.code().value()));
+                    lg2::info(
+                        "Remove sensor from dbus for read fail, file: {FILE}, return code:{RC}",
+                        "FILE", file.c_str(), "RC", e.code().value());
                     // Mark this sensor to be removed from dbus
                     _rmSensors[sensorSetKey] = attrs;
                 }
@@ -615,9 +615,8 @@ void MainLoop::read()
                 xyz::openbmc_project::Sensor::Device::ReadFailure::
                     CALLOUT_DEVICE_PATH(_devPath.c_str()));
 
-            log<level::INFO>(std::format("Failing sysfs file: {} errno: {}",
-                                         file, e.code().value())
-                                 .c_str());
+            lg2::info("Failing sysfs file: {FILE} errno: {ERRNO}", "FILE", file,
+                      "ERRNO", e.code().value());
 
             exit(EXIT_FAILURE);
         }
@@ -681,8 +680,8 @@ void MainLoop::addDroppedSensors()
                     sysfs::make_sysfs_path(_ioAccess->path(), it->first.first,
                                            it->first.second, input);
 
-                log<level::INFO>("Added sensor to dbus after successful read",
-                                 entry("FILE=%s", file.c_str()));
+                lg2::info("Added sensor to dbus after successful read {FILE}",
+                          "FILE", file.c_str());
 
                 it = _rmSensors.erase(it);
             }
