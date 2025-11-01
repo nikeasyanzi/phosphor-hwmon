@@ -618,7 +618,7 @@ void MainLoop::read()
 
          lg2::info(std::format("Failing sysfs file: {FILE} errno: {ERRNO}",
                                          "FILE", file, 
-                               "ERRNO", e.code().value().c_str());
+                               "ERRNO", e.code().value());
 
             exit(EXIT_FAILURE);
         }
